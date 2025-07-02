@@ -32,6 +32,21 @@ class Department(db.Model, SerializerMixin):
 
     employees = db.relationship('Employee', back_populates='department', cascade='all, delete-orphan')
 
+
+    @property
+    def manager_name(self):
+        manager = next((emp for emp in self.employees if emp.user_type_name == "Manager"), None)
+        if manager:
+            return f"{manager.first_name} {manager.last_name}"
+        return "N/A"
+
+    serialize_only = (
+        "id",
+        "name",
+        "description",
+        "manager_name" 
+    )
+
     serialize_rules = ("-employees.department",)
 
 # ===========================
